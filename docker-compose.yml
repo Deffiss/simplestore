@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  storesample.commands:
+    image: storesample.commands
+    build:
+      context: ./src/StoreSample.Commands
+      dockerfile: Dockerfile
+    links:
+      - eventstore:eventstore
+    environment:
+      - EventStore__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113
+
+  storesample.queries:
+    image: storesample.queries
+    build:
+      context: ./src/StoreSample.Queries
+      dockerfile: Dockerfile
+    links:
+      - eventstore:eventstore
+      - mongo:mongo
+    environment:
+      - EventStore__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113
+      - Mongo__ConnectionString=mongodb://mongo:27017
+
+  eventstore:
+    image: eventstore/eventstore
+    ports:
+      - "1112-1113:1112-1113"
+      - "2112-2113:2112-2113"
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes: 
+      - /data/db:/data/db
+
+  mongoexpress:
+    container_name: "mongo-express"
+    image: mongo-express
+    links:
+      - mongo:mongo
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_OPTIONS_EDITORTHEME=cobalt
+      - ME_CONFIG_BASICAUTH_USERNAME=test
+      - ME_CONFIG_BASICAUTH_PASSWORD=test123

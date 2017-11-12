@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  storesample.commands:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5001:5001"
+
+  storesample.queries:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5002:5002"
