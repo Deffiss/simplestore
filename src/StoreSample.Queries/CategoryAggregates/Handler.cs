@@ -51,6 +51,17 @@ namespace StoreSample.Queries.CategoryAggregates
             });
         }
 
+        public async Task Handle(Renamed notification)
+        {
+            if (notification == null)
+            {
+                throw new ArgumentNullException(nameof(notification));
+            }
+
+            var collection = _mongoClient.GetDatabase(_settings.Database).GetCollection<CategoryAggregate>(nameof(CategoryAggregate));
+            await collection.UpdateOneAsync(Builders<CategoryAggregate>.Filter.Eq(p => p.OriginalId, notification.SourceId), Builders<CategoryAggregate>.Update.Set(p => p.Name, notification.Name));
+        }
+
         public async Task Handle(ProductAdded notification)
         {
             if (notification == null)

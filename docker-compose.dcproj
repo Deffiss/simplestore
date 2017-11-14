@@ -5,7 +5,7 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>d4c9f04e-87f0-470d-9df7-d7d05b43577f</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://localhost:{ServicePort}/api/values</DockerServiceUrl>
+    <DockerServiceUrl>http://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>storesample.commands</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
