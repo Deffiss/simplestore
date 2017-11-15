@@ -2,6 +2,7 @@ version: '3'
 
 services:
   storesample.commands:
+    container_name: storesample_commands
     image: storesample.commands
     build:
       context: ./src/StoreSample.Commands
@@ -12,6 +13,7 @@ services:
       - EventStore__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113
 
   storesample.queries:
+    container_name: storesample_queries
     image: storesample.queries
     build:
       context: ./src/StoreSample.Queries
@@ -22,6 +24,16 @@ services:
     environment:
       - EventStore__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113
       - Mongo__ConnectionString=mongodb://mongo:27017
+
+  storesample.ui:
+    container_name: storesample_ui
+    image: storesample.ui
+    build:
+      context: ./src/StoreSample.UI
+      dockerfile: Dockerfile
+    environment:
+      - Api__Commands=http://storesample_commands:5001
+      - Api__Queries=http://storesample_queries:5002
 
   eventstore:
     image: eventstore/eventstore

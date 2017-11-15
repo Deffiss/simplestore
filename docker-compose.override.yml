@@ -12,3 +12,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "5002:5002"
+
+  storesample.ui:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:5000"

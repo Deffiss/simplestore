@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Filters;
 
 namespace StoreSample.UI
 {
@@ -23,6 +26,18 @@ namespace StoreSample.UI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(Configuration)
+                    .Filter.ByExcluding(e => e.Level < Serilog.Events.LogEventLevel.Warning && Matching.WithProperty<string>("RequestPath", p => p.IndexOf("swagger", StringComparison.OrdinalIgnoreCase) >= 0)(e))
+                    .Filter.ByExcluding(Matching.WithProperty<string>("RequestPath", p => p.IndexOf("favicon.icon", StringComparison.OrdinalIgnoreCase) >= 0))
+                    .CreateLogger();
+                builder.AddSerilog(dispose: true);
+            });
+            services.AddSingleton(Log.Logger);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
