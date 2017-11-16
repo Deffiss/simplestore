@@ -23,5 +23,13 @@ namespace StoreSample.Queries.Categories
             HttpContext.Response.Headers.Add("X-Total-Count", result.Length.ToString());
             return Ok(result);
         }
+
+        [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Category))]
+        public async Task<IActionResult> GetById(GetById query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace StoreSample.Queries.Categories
 {
     public class Handler :
         IAsyncRequestHandler<GetAll, Category[]>,
+        IAsyncRequestHandler<GetById, Category>,
         IAsyncNotificationHandler<Created>,
         IAsyncNotificationHandler<Renamed>,
         IAsyncNotificationHandler<PropertiesChanged>
@@ -33,6 +34,17 @@ namespace StoreSample.Queries.Categories
 
             var collection = _mongoClient.GetDatabase(_settings.Database).GetCollection<Category>(nameof(Category));
             return (await collection.Find(Builders<Category>.Filter.Empty).ToListAsync()).ToArray();
+        }
+
+        public async Task<Category> Handle(GetById message)
+        {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            var collection = _mongoClient.GetDatabase(_settings.Database).GetCollection<Category>(nameof(Category));
+            return await collection.Find(Builders<Category>.Filter.Empty).FirstOrDefaultAsync();
         }
 
         public async Task Handle(Created notification)
