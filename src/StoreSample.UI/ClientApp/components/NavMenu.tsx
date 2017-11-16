@@ -1,40 +1,58 @@
 import * as React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, withRouter } from 'react-router-dom';
+import * as H from 'history';
 
-export class NavMenu extends React.Component<{}, {}> {
+import { ICategoryAggregate } from '../models/ICategoryAggregate';
+import { CategoryAggregate } from './CategoryAggregate';
+import CatalogService from '../services/CatalogService';
+
+interface State {
+    categoryAggregates: ICategoryAggregate[],
+}
+
+class NavMenu extends React.Component<{ history: H.History, location: H.Location }, State> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            categoryAggregates: [],
+        }
+    }
+
+    public componentWillReceiveProps(nextProp: { history: H.History, location: H.Location }) {
+        if (location.pathname != this.props.location.pathname && location.pathname=='/') {
+            CatalogService.getCategoryAggregates().then(aggrs => {
+                this.setState({ categoryAggregates: aggrs });
+                if (aggrs.length > 0) {
+                    this.props.history.push(`/${aggrs[0].id}`);
+                }
+            })
+        }
+    }
+
+    public componentWillMount() {
+        CatalogService.getCategoryAggregates().then(aggrs => {
+            this.setState({ categoryAggregates: aggrs });
+            if (aggrs.length > 0) {
+                this.props.history.push(`/${aggrs[0].id}`);
+            }
+        })
+    }
     public render() {
         return <div className='main-nav'>
                 <div className='navbar navbar-inverse'>
-                <div className='navbar-header'>
-                    <button type='button' className='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse'>
-                        <span className='sr-only'>Toggle navigation</span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                    </button>
-                    <Link className='navbar-brand' to={ '/' }>StoreSample.UI</Link>
-                </div>
                 <div className='clearfix'></div>
                 <div className='navbar-collapse collapse'>
                     <ul className='nav navbar-nav'>
-                        <li>
-                            <NavLink exact to={ '/' } activeClassName='active'>
-                                <span className='glyphicon glyphicon-home'></span> Home
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={ '/counter' } activeClassName='active'>
-                                <span className='glyphicon glyphicon-education'></span> Counter
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={ '/fetchdata' } activeClassName='active'>
-                                <span className='glyphicon glyphicon-th-list'></span> Fetch data
-                            </NavLink>
-                        </li>
+                      {
+                          this.state.categoryAggregates.map(ca => {
+                              return <CategoryAggregate key={ca.id} categoryAggregate={ca} />
+                          })
+                      }
                     </ul>
                 </div>
             </div>
         </div>;
     }
 }
+
+export default withRouter(NavMenu);
