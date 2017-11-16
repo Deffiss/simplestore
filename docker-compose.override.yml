@@ -15,6 +15,6 @@ services:
 
   storesample.ui:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Release
     ports:
       - "5000:5000"
