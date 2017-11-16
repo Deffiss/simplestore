@@ -24,7 +24,7 @@ namespace StoreSample.Queries.Categories
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Category))]
         public async Task<IActionResult> GetById(GetById query)
         {

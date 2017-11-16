@@ -44,7 +44,7 @@ namespace StoreSample.Queries.Categories
             }
 
             var collection = _mongoClient.GetDatabase(_settings.Database).GetCollection<Category>(nameof(Category));
-            return await collection.Find(Builders<Category>.Filter.Empty).FirstOrDefaultAsync();
+            return await collection.Find(Builders<Category>.Filter.Eq(c => c.OriginalId, message.Id)).FirstOrDefaultAsync();
         }
 
         public async Task Handle(Created notification)
